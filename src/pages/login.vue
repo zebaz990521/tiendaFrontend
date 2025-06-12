@@ -7,7 +7,7 @@
         v-model.trim="form.email"
         label="Correo electrónico"
         type="email"
-        prepend-icon="mdi-email"
+        prepend-icon="mdi:mdi-email"
         :error-messages="errors.email"
         :rules="[rules.required, rules.email]"
         required
@@ -16,7 +16,7 @@
         v-model.trim="form.password"
         label="Contraseña"
         type="password"
-        prepend-icon="mdi-lock"
+        prepend-icon="mdi:mdi-lock"
         :rules="[rules.required]"
         :error-messages="errors.password"
         required
@@ -45,18 +45,10 @@ import { ref } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 import AuthLayout from '@/layouts/AuthLayout.vue'
 import { useAuth } from '@/composables/useAuth'
-
+import type { LoginForm, LoginErrors } from '@/types';
 const { login } = useAuth()
 
-interface LoginForm {
-  email: string
-  password: string
-}
 
-interface LoginErrors {
-  email: string[]
-  password: string[]
-}
 
 const router = useRouter()
 
@@ -87,7 +79,7 @@ const handleLogin = async () => {
 
   try {
     await login(form.value)
-    /* router.push('/dashboard') */
+    router.push('/dashboard')
   } catch (err: any) {
     console.log(err)
     if (err.response?.status === 422) {

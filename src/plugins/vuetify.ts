@@ -7,7 +7,9 @@
 // Styles
 import '@mdi/font/css/materialdesignicons.css'
 import 'vuetify/styles'
-
+import '@fortawesome/fontawesome-free/css/all.css' // Ensure your project is capable of handling css files
+import { aliases, fa } from 'vuetify/iconsets/fa'
+ import {  mdi } from 'vuetify/iconsets/mdi' 
 // Composables
 import { createVuetify } from 'vuetify'
 
@@ -16,4 +18,23 @@ export default createVuetify({
   theme: {
     defaultTheme: 'dark',
   },
+  icons: {
+    defaultSet: 'fa',
+    aliases,
+    sets: {
+      fa,
+      mdi,
+    },
+  },
+ /*  icons: {
+    defaultSet: 'mdi', // This is already the default value - only for display purposes
+  }, */
+
+ /*  icons: {
+    defaultSet: 'mdi',
+    aliases,
+    sets: {
+      mdi,
+    },
+  }, */
 })

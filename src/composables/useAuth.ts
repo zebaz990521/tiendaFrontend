@@ -2,9 +2,21 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import api from '@/plugins/clientAxios'
 
+interface User {
+  id: number
+  first_name: string
+  last_name: string
+  email: string
+  email_verified_at: string | null
+  phone: string
+  address: string
+  created_at: string
+  updated_at: string
+}
+
 
 const token = ref<string | null>(sessionStorage.getItem('token'))
-const user = ref<any | null>(null)
+const user = ref<User | null>(null)
 
 export const useAuth = () => {
   const router = useRouter()
@@ -17,6 +29,8 @@ export const useAuth = () => {
 
   const fetchUser = async () => {
     const response = await api.get('/me')
+
+    console.log(response.data)
     user.value = response.data
   }
 

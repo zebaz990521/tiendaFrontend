@@ -34,6 +34,15 @@
         :error-messages="errors.password"
       />
 
+      <v-text-field
+        v-model.trim="form.password_confirmation"
+        label="Confirmar Contraseña"
+        type="password"
+        :rules="[rules.required, rules.min(6)]"
+        required
+        :error-messages="errors.password_confirmation"
+      />
+
       <v-btn type="submit" color="success" block :loading="loading">Registrarse</v-btn>
 
       <div class="text-center mt-4">
@@ -55,23 +64,9 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import AuthLayout from '@/layouts/AuthLayout.vue'
 import { useAuth } from '@/composables/useAuth'
+import type { RegisterErrors, RegisterForm } from '@/types';
 
 const { register } = useAuth()
-
-interface RegisterForm {
-  first_name: string
-  last_name: string
-  email: string
-  password: string
-}
-
-interface RegisterErrors {
-  first_name: string[]
-  last_name: string[]
-  email: string[]
-  password: string[]
-}
-
 const router = useRouter()
 
 const form = ref<RegisterForm>({
@@ -79,6 +74,7 @@ const form = ref<RegisterForm>({
   last_name: '',
   email: '',
   password: '',
+  password_confirmation: ''
 })
 
 const errors = ref<RegisterErrors>({
@@ -86,6 +82,7 @@ const errors = ref<RegisterErrors>({
   last_name: [],
   email: [],
   password: [],
+  password_confirmation: []
 })
 
 const loading = ref(false)
@@ -108,12 +105,13 @@ const handleRegister = async () => {
     last_name: [],
     email: [],
     password: [],
+    password_confirmation: []
   }
   serverError.value = null
 
   try {
      await register(form.value)
-    /* router.push('/dashboard') */
+     router.push('/dashboard') 
   } catch (err: any) {
     if (err.response?.status === 422) {
 
