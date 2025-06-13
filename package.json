@@ -16,7 +16,8 @@
     "@mdi/font": "7.4.47",
     "axios": "^1.9.0",
     "vue": "^3.5.13",
-    "vuetify": "^3.8.1"
+    "vuetify": "^3.8.1",
+    "zod": "^3.25.63"
   },
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^6.7.2",

@@ -21,8 +21,9 @@
     temporary
   >
     <v-list density="compact" nav>
-      <v-list-item  prepend-icon="fa-solid fa-gauge" title="Panel" to="/dashboard" ></v-list-item>
-      <v-list-item  prepend-icon="fa-solid fa-tags" title="Productos" to="/products" ></v-list-item>
+      <v-list-item  prepend-icon="fa-solid fa-gauge" title="Panel" to="/admin/dashboard" ></v-list-item>
+      <v-list-item  prepend-icon="fa-solid fa-tags" title="Categorias" to="/admin/categories" ></v-list-item>
+      <v-list-item  prepend-icon="fa-solid fa-tags" title="Productos" to="/admin/products" ></v-list-item>
       <v-list-item   title="Cerrar Sesión" @click="logout" />
     </v-list>
   </v-navigation-drawer>

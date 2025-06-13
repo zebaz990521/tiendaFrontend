@@ -2,30 +2,30 @@
   <AuthLayout>
     <template #title>Iniciar Sesión</template>
 
-    <v-form @submit.prevent="handleLogin" ref="formRef">
+    <v-form @submit.prevent="handleLogin">
       <v-text-field
-        v-model.trim="form.email"
+        v-model="form.email"
         label="Correo electrónico"
         type="email"
         prepend-icon="mdi:mdi-email"
         :error-messages="errors.email"
-        :rules="[rules.required, rules.email]"
+        @input="validateField('email')"
         required
       />
       <v-text-field
-        v-model.trim="form.password"
+        v-model="form.password"
         label="Contraseña"
         type="password"
         prepend-icon="mdi:mdi-lock"
-        :rules="[rules.required]"
         :error-messages="errors.password"
+        @input="validateField('password')"
         required
       />
+
       <v-btn type="submit" color="primary" block :loading="loading">
         Entrar
       </v-btn>
 
-        <!-- Enlace a registro -->
       <div class="text-center mt-4">
         <span>¿No tienes cuenta?</span>
         <RouterLink to="/register" class="text-primary font-weight-medium ms-1">
@@ -42,46 +42,70 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { RouterLink, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import AuthLayout from '@/layouts/AuthLayout.vue'
 import { useAuth } from '@/composables/useAuth'
-import type { LoginForm, LoginErrors } from '@/types';
+import { loginSchema, type LoginSchema } from '@/schemas/loginSchema'
+import type { ZodIssue } from 'zod'
+
 const { login } = useAuth()
-
-
-
 const router = useRouter()
 
+const form = ref<LoginSchema>({
+  email: '',
+  password: '',
+})
 
-const form = ref<LoginForm>({ email: '', password: '' })
-const errors = ref<LoginErrors>({ email: [], password: [] })
+type LoginErrors = Record<keyof LoginSchema, string[]>
+
+const errors = ref<LoginErrors>({
+  email: [],
+  password: [],
+})
+
 const loading = ref(false)
 const serverError = ref<string | null>(null)
-const formRef = ref()
 
-const rules = {
-  required: (v: string) => !!v || 'Este campo es obligatorio',
-  email: (v: string) => /.+@.+\..+/.test(v) || 'Correo inválido',
-  min: (length: number) => (v: string) => v.length >= length || `Debe tener al menos ${length} caracteres`,
+/**
+ * Valida un solo campo con Zod
+ */
+const validateField = (field: keyof LoginSchema) => {
+  errors.value[field] = []
+
+  const fieldSchema = loginSchema.shape[field]
+  const result = fieldSchema.safeParse(form.value[field])
+
+  if (!result.success) {
+    errors.value[field] = result.error.issues.map((issue) => issue.message)
+  }
 }
 
+/**
+ * Valida y envía el formulario
+ */
 const handleLogin = async () => {
-   const isValid = await formRef.value?.validate()
-  if (!isValid) return
-
   loading.value = true
   errors.value = {
     email: [],
     password: [],
   }
-
   serverError.value = null
+
+  const result = loginSchema.safeParse(form.value)
+
+  if (!result.success) {
+    for (const issue of result.error.issues as ZodIssue[]) {
+      const field = issue.path[0] as keyof LoginErrors
+      errors.value[field].push(issue.message)
+    }
+    loading.value = false
+    return
+  }
 
   try {
     await login(form.value)
-    router.push('/dashboard')
+    router.push('/admin/dashboard')
   } catch (err: any) {
-    console.log(err)
     if (err.response?.status === 422) {
       errors.value = err.response.data.errors
     } else {
